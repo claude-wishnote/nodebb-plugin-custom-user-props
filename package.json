@@ -1,0 +1,45 @@
+{
+  "name": "nodebb-plugin-custom-user-props",
+  "version": "1.0.0",
+  "description": "custom some user props",
+  "main": "library.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/claude-wishnote/nodebb-plugin-custom-user-props"
+  },
+  "keywords": [
+    "nodebb",
+    "plugin",
+    "quickstart",
+    "shell"
+  ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ]
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/claude-wishnote/nodebb-plugin-custom-user-props/issues"
+  },
+  "readmeFilename": "README.md",
+  "nbbpm": {
+    "compatibility": "^3.2.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "19.3.0",
+    "@commitlint/config-angular": "19.3.0",
+    "eslint": "9.x",
+    "eslint-config-nodebb": "0.2.1",
+    "eslint-plugin-import": "2.x",
+    "husky": "9.0.11",
+    "lint-staged": "15.2.7"
+  }
+}

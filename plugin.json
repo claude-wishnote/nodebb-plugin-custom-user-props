@@ -1,0 +1,25 @@
+{
+    "id": "nodebb-plugin-custom-user-props",
+    "url": "https://github.com/claude-wishnote/nodebb-plugin-custom-user-props",
+    "library": "./library.js",
+    "hooks": [
+        { "hook": "static:app.load", "method": "init" },
+          { "hook": "filter:account/edit.build", "method": "filterAccountEditBuild" },
+        {
+            "hook": "filter:user.updateProfile", 
+            "method": "filterUpdateProfile"
+        },
+        {
+            "hook":"action:user.updateProfile",
+            "method":"actionUserUpdateProfile"
+        },
+        {	
+            "hook": "filter:user.whitelistFields",
+            "method": "filterUserWhitelistFields"
+        }
+    ],
+    "scripts": [
+        "static/lib/custom-user.js"
+    ],
+    "templates": "static/templates"
+}
