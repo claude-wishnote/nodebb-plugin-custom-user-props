@@ -4,22 +4,29 @@
     "library": "./library.js",
     "hooks": [
         { "hook": "static:app.load", "method": "init" },
-          { "hook": "filter:account/edit.build", "method": "filterAccountEditBuild" },
-        {
-            "hook": "filter:user.updateProfile", 
-            "method": "filterUpdateProfile"
-        },
-        {
-            "hook":"action:user.updateProfile",
-            "method":"actionUserUpdateProfile"
-        },
-        {	
-            "hook": "filter:user.whitelistFields",
-            "method": "filterUserWhitelistFields"
-        }
+        { "hook": "filter:account/edit.build", "method": "filterAccountEditBuild" },
+        {"hook": "filter:user.updateProfile", "method": "filterUpdateProfile"},
+        {"hook":"action:user.updateProfile","method":"actionUserUpdateProfile"},
+        {"hook": "filter:user.whitelistFields","method": "filterUserWhitelistFields"},
+		{
+			"hook": "filter:admin.header.build", "method": "addAdminNavigation"
+		}
     ],
+	"staticDirs": {
+		"static": "./static"
+	},
+    "scss": [
+		"static/scss/style.scss"
+	],
     "scripts": [
-        "static/lib/custom-user.js"
+        "static/lib/custom-user-props-main.js"
     ],
+    "acpScripts": [
+		"static/lib/custom-user-props-acp-main.js"
+	],
+    "modules": {
+		"../client/custom-user-props.js": "./static/lib/custom-user-props.js",
+        "../admin/plugins/custom-user-props.js": "static/lib/admin.js"
+	},
     "templates": "static/templates"
 }

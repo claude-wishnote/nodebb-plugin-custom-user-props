@@ -1,4 +1,5 @@
 'use strict';
+import { save, load } from 'settings';
 
 $(window).on('action:ajaxify.end', async function () {
     if(ajaxify.data.template.name === 'account/edit'){
@@ -113,14 +114,3 @@ $(window).on('action:ajaxify.end', async function () {
         cusromArea.append(platformReadNumber);
     }
 });
-
-// $('#save').on('click', function () {
-//     var userData = {
-//         // ... 其他数据 ...
-//         snsUrl: $('#snsUrl').val()
-//     };
-// 	console.log('userData:', userData);
-//     socket.emit('user.updateProfile', userData, function (err) {
-//         // ... 错误处理和其他代码 ...
-//     });
-// });
