@@ -8,6 +8,7 @@
         {"hook": "filter:user.updateProfile", "method": "filterUpdateProfile"},
         {"hook":"action:user.updateProfile","method":"actionUserUpdateProfile"},
         {"hook": "filter:user.whitelistFields","method": "filterUserWhitelistFields"},
+        {"hook":"filter:user.getFields","method":"filterUserGetFields"},
 		{
 			"hook": "filter:admin.header.build", "method": "addAdminNavigation"
 		}

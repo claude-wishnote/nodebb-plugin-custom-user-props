@@ -15,27 +15,16 @@ plugin.init = async function (params, callback) {
 	winston.info('Initializing custom user props...');
 	let setting = await meta.settings.get('custom-user-props');
 	//注册用户自定义字段,customFields默认有四个字段
-	// { name: 'snsUrl', label: 'snsUrl', type: 'text'},
-	// { name: 'domainType', label: 'domainType', type: 'select', options: ['beauty', 'health', 'baby', 'travel']},
-	// { name: 'followerSize', label: 'followerSize', type: 'select', options: ['less than 5k', '10k', '50k', '100k', 'more than 100k'] },
-	// { name: 'platform', label: 'platform', type: 'select', options: ['wechat', 'weibo', 'douyin', 'kuaishou']}
 	//检查customFields，如果缺少默认字段，添加默认字段到customFields
 	let defaultFields = [
 		{ name: 'snsUrl', label: 'snsUrl', type: 'text'},
-		{ name: 'domainType', label: 'domainType', type: 'select', options: ['beauty', 'health', 'baby', 'travel']},
-		{ name: 'followerSize', label: 'followerSize', type: 'select', options: ['less than 5k', '10k', '50k', '100k', 'more than 100k'] },
-		{ name: 'platform', label: 'platform', type: 'select', options: ['wechat', 'weibo', 'douyin', 'kuaishou']}
+		{ name: 'domainType', label: 'domainType', type: 'select', options: 'beauty,health,baby,travel'},
+		{ name: 'followerSize', label: 'followerSize', type: 'select', options: 'less than 5k,10k,50k,100k,more than 100k'},
+		{ name: 'platform', label: 'platform', type: 'select', options: ['wechat,weibo,douyin,kuaishou']}
 	]
-	if(setting.customFields){
-		defaultFields.forEach((field) => {
-			if(!setting.customFields.find((item) => item.name === field.name)){
-				setting.customFields.push(field);
-			}
-		})
-	}else{
+	if(!setting.customFields.length){
 		setting.customFields = defaultFields;
 	}
-	//保存customFields到meta.settings
 	await meta.settings.set('custom-user-props', {...setting});
 	//注册用户可查看的页面
 	routeHelpers.setupPageRoute(router, '/custom-user-props', [(req, res, next) => {
@@ -47,6 +36,7 @@ plugin.init = async function (params, callback) {
 		let user = await User.getUserFields(req.uid, []);
 		console.log('user:',user);
 		res.render('custom-user-props', {
+			customFields: setting.customFields,
 			uid: req.uid,
 			snsUrl: user.snsUrl,
 			followerSize: user.followerSize,
@@ -73,16 +63,19 @@ plugin.filterRouterPage = async (hookData) => {
     return hookData;
 };
 //完成更新到前执行
-plugin.filterUpdateProfile = function(hookData) {
+plugin.filterUpdateProfile = async function(hookData) {
     // var uid = data.uid;
     // console.log('hook filterUpdateProfile------');
     hookData.fields = [
         ...hookData.fields,
-        'snsUrl',
-        'domainType',
-        'followerSize',
-        'platform'
+		'customFields'
     ]
+	let setting = await meta.settings.get('custom-user-props');
+	if(setting.customFields.length){
+		setting.customFields.forEach(field => {
+			hookData.fields.push(field.name);
+		});
+	}
     return hookData
      // 使用 NodeBB 的 User.updateProfile 方法更新用户的自定义字段
     //  User.updateProfile(uid, data,[ "snsUrl"])
@@ -98,15 +91,29 @@ plugin.actionUserUpdateProfile = function (hookData){
     return hookData;
 }
 //去用户数据前执行
-plugin.filterUserWhitelistFields = function (hookData){
+plugin.filterUserWhitelistFields = async function (hookData){
     // console.log('hook filterUserWhitelistFields------');
-    hookData.whitelist.push('snsUrl');
-    hookData.whitelist.push('domainType');
-    hookData.whitelist.push('followerSize');
-    hookData.whitelist.push('platform');
+    hookData.whitelist.push('customFields');
+	let setting = await meta.settings.get('custom-user-props');
+	if(setting.customFields.length){
+		setting.customFields.forEach(field => {
+			hookData.whitelist.push(field.name);
+		});
+	}
+    // hookData.whitelist.push('snsUrl');
+    // hookData.whitelist.push('domainType');
+    // hookData.whitelist.push('followerSize');
+    // hookData.whitelist.push('platform');
     return hookData;
 }
-
+plugin.filterUserGetFields = async function (hookData){
+	// console.log('hook filterUserGetFields------');
+	let setting = await meta.settings.get('custom-user-props');
+	hookData.users.forEach(user => {
+		user.customFields = setting.customFields;
+	})
+	return hookData;
+}
 //注册插件到admin导航栏
 plugin.addAdminNavigation = (header) => {
 	header.plugins.push({
