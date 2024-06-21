@@ -3,49 +3,52 @@ import { save, load } from 'settings';
 
 $(window).on('action:ajaxify.end', async function () {
     if(ajaxify.data.template.name === 'account/edit'){
-		console.log(ajaxify.data.customFields);
-		const customFields = ajaxify.data.customFields;
+        console.log(ajaxify.data.customFields);
+        const customFields = ajaxify.data.customFields;
 
         // ... 省略了一部分代码 ...
         const cusromArea = $('[component="profile/edit/form"]');
-		for (const field of customFields) {
-			const divReadNumber = $('<div/>', {
-				class: 'mb-3',
-			});
-			const label = $('<label/>', {
-				for: field.name,
-				text: field.name,
-				class: 'form-label fw-bold'
-			});
-			if(field.type === 'select'){
-				console.log(field);
-				const options = field.options.split(',');
-				const select = $('<select/>', {
-					id: field.name,
-					name: field.name,
-					class: 'form-control',
-				}).append(
-					$('<option/>', { value: '', text: `Select a ${field.name}`, selected: !ajaxify.data[field.name] }),
-					options.map(option => $('<option/>', {
-						value: option,
-						text: option,
-						selected: option === ajaxify.data[field.name]
-					}))
-				);
-				divReadNumber.append(label, select);
-			}else{
-				const input = $('<input/>', {
-					type: 'text',
-					id: field.name,
-					name: field.name,
-					class: 'form-control',
-					placeholder: `Enter your ${field.name} here`,
-					value: ajaxify.data[field.name]??''
-				});
-				divReadNumber.append(label, input);
-			}
-			cusromArea.append(divReadNumber);
-		}
+        for (const field of customFields) {
+            const divReadNumber = $('<div/>', {
+                class: 'mb-3',
+            });
+            const label = $('<label/>', {
+                for: field.name,
+                text: field.name,
+                class: 'form-label fw-bold'
+            });
+            if(field.type === 'select'){
+                console.log(field);
+                const options = field.options.split(',');
+                const select = $('<select/>', {
+                    id: field.name,
+                    name: field.name,
+                    class: 'form-control',
+                }).append(
+                    $('<option/>', { value: '', text: `Select a ${field.name}`, selected: !ajaxify.data[field.name] }),
+                    options.map(option => $('<option/>', {
+                        value: option,
+                        text: option,
+                        selected: option === ajaxify.data[field.name]
+                    }))
+                );
+                divReadNumber.append(label, select);
+            }else{
+                const input = $('<input/>', {
+                    type: 'text',
+                    id: field.name,
+                    name: field.name,
+                    class: 'form-control',
+                    placeholder: `Enter your ${field.name} here`,
+                    value: ajaxify.data[field.name]??''
+                });
+                divReadNumber.append(label, input);
+            }
+            cusromArea.append(divReadNumber);
+        }
+        cusromArea.append($('<div/>',{
+            style: 'margin-bottom: 80px;', // 添加了底部边距
+        }))
         // const snsUrlReadNumber =  $('<div/>', {
         //     class: 'mb-3',
         // });
