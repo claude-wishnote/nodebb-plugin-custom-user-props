@@ -10,7 +10,8 @@
   "keywords": [
     "nodebb",
     "plugin",
-    "quickstart",
+    "custom",
+    "user",
     "shell"
   ],
   "husky": {
