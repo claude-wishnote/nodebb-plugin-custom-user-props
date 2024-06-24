@@ -20,7 +20,7 @@ plugin.init = async function (params, callback) {
 		{ name: 'snsUrl', label: 'snsUrl', type: 'text'},
 		{ name: 'domainType', label: 'domainType', type: 'select', options: 'beauty,health,baby,travel'},
 		{ name: 'followerSize', label: 'followerSize', type: 'select', options: 'less than 5k,10k,50k,100k,more than 100k'},
-		{ name: 'platform', label: 'platform', type: 'select', options: ['wechat,weibo,douyin,kuaishou']}
+		{ name: 'platform', label: 'platform', type: 'select', options: 'wechat,weibo,douyin,kuaishou'}
 	]
 	if(!setting?.customFields?.length){
 		setting.customFields = defaultFields;
@@ -62,8 +62,11 @@ plugin.filterRouterPage = async (hookData) => {
     }
     return hookData;
 };
+
 //完成更新到前执行
 plugin.filterUpdateProfile = async function(hookData) {
+
+
     // var uid = data.uid;
     // console.log('hook filterUpdateProfile------');
     hookData.fields = [
