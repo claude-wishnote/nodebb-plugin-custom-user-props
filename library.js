@@ -22,7 +22,7 @@ plugin.init = async function (params, callback) {
 		{ name: 'followerSize', label: 'followerSize', type: 'select', options: 'less than 5k,10k,50k,100k,more than 100k'},
 		{ name: 'platform', label: 'platform', type: 'select', options: ['wechat,weibo,douyin,kuaishou']}
 	]
-	if(!setting.customFields.length){
+	if(!setting?.customFields?.length){
 		setting.customFields = defaultFields;
 	}
 	await meta.settings.set('custom-user-props', {...setting});
