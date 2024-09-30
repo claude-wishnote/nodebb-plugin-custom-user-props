@@ -29,5 +29,7 @@
 		"../client/custom-user-props.js": "./static/lib/custom-user-props.js",
         "../admin/plugins/custom-user-props.js": "static/lib/admin.js"
 	},
-    "templates": "static/templates"
+    "templates": "static/templates",
+    "languages": "languages",
+    "defaultLang": "en-GB"
 }

@@ -2,61 +2,62 @@
 import { save, load } from 'settings';
 
 $(window).on('action:ajaxify.end', async function () {
-    if(ajaxify.data.template.name === 'account/edit'){
-        console.log(ajaxify.data.customFields);
-        const customFields = ajaxify.data.customFields;
+    if (ajaxify.data.template.name === 'account/edit') {
+		const translator = await app.require('translator');
+		const customFields = ajaxify.data.customFields || [];
+        const userData = ajaxify.data;
 
-        // ... 省略了一部分代码 ...
-        const cusromArea = $('[component="profile/edit/form"]');
-		const customFieldsReadNumber = $('<div/>', {
-			style:'margin-top: 20px;margin-bottom: 20px;'
-		});
+        const customArea = $('[component="profile/edit/form"]');
+        const customFieldsContainer = $('<div/>', {
+            style: 'margin-top: 20px;margin-bottom: 20px;'
+        });
+
         for (const field of customFields) {
-            const divReadNumber = $('<div/>', {
+            const fieldContainer = $('<div/>', {
                 class: 'mb-3',
             });
             const label = $('<label/>', {
                 for: field.name,
-                text: field.name,
+                text: await translator.translate(field.label),
                 class: 'form-label fw-bold'
             });
-            if(field.type === 'select'){
-                console.log(field);
+
+            if (field.type === 'select') {
                 const options = field.options.split(',');
                 const select = $('<select/>', {
                     id: field.name,
                     name: field.name,
                     class: 'form-control',
                 }).append(
-                    $('<option/>', { value: '', text: `Select a ${field.name}`, selected: !ajaxify.data[field.name] }),
+                    $('<option/>', { value: '', text: await translator.translate(`[[custom-user-props:select-a]] ${await translator.translate(field.label)}`), selected: !userData[field.name] }),
                     options.map(option => $('<option/>', {
                         value: option,
                         text: option,
-                        selected: option === ajaxify.data[field.name]
+                        selected: option === userData[field.name]
                     }))
                 );
-                divReadNumber.append(label, select);
-            }else{
+                fieldContainer.append(label, select);
+            } else {
                 const input = $('<input/>', {
                     type: 'text',
                     id: field.name,
                     name: field.name,
                     class: 'form-control',
-                    placeholder: `Enter your ${field.name} here`,
-                    value: ajaxify.data[field.name]??''
+                    placeholder: await translator.translate(`[[custom-user-props:enter-your]] ${await translator.translate(field.label)}`),
+                    value: userData[field.name] || ''
                 });
-                divReadNumber.append(label, input);
+                fieldContainer.append(label, input);
             }
-            customFieldsReadNumber.append(divReadNumber);
+            customFieldsContainer.append(fieldContainer);
         }
-		//如果最后一个子元素是id=submitBtn,就将新生成的元素插入到submitBtn之前，否则直接append
-		if(cusromArea.children().last().attr('id') === 'submitBtn'){
-			cusromArea.children().last().before(customFieldsReadNumber);
-		} else{
-			cusromArea.append(customFieldsReadNumber);
-		}
-        cusromArea.append($('<div/>',{
-            style: 'margin-bottom: 80px;', // 添加了底部边距
-        }))
+
+        if (customArea.children().last().attr('id') === 'submitBtn') {
+            customArea.children().last().before(customFieldsContainer);
+        } else {
+            customArea.append(customFieldsContainer);
+        }
+        customArea.append($('<div/>', {
+            style: 'margin-bottom: 80px;',
+        }));
     }
 });

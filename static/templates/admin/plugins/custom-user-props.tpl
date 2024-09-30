@@ -6,8 +6,7 @@
 			data-form-template="admin/plugins/custom-user-props/partials/sorted-list/form">
 			<input hidden="text" name="customFields">
 			<ul data-type="list" class="list-group mb-2"></ul>
-			<button type="button" data-type="add" class="btn btn-info">Add Field</button>
+			<button type="button" data-type="add" class="btn btn-info">[[custom-user-props:add-field]]</button>
 		</div>
 	</form>
-	<!-- IMPORT admin/partials/settings/toc.tpl -->
 </div>
