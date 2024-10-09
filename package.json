@@ -1,6 +1,6 @@
 {
   "name": "nodebb-plugin-custom-user-props",
-  "version": "1.0.6",
+  "version": "1.1.0",
   "description": "custom some user props",
   "main": "library.js",
   "repository": {

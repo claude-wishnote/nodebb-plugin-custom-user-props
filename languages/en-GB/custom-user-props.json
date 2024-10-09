@@ -36,5 +36,6 @@
     "text": "Text",
     "select": "Select",
     "remove": "Remove",
-    "label": "Label"
+    "label": "Label",
+    "regProp": "Fill in when registering"
 }

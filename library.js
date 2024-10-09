@@ -7,10 +7,11 @@ const plugin = module.exports;
 const routeHelpers = require.main.require('./src/routes/helpers');
 
 const meta = require.main.require('./src/meta');
-var User = require.main.require('./src/user')
-var db = require.main.require('./src/database');
+const User = require.main.require('./src/user')
+const db = require.main.require('./src/database');
+
 //
-plugin.init = async function (params, callback) {
+plugin.init = async function (params) {
 	console.log('Initializing custom user props...');
     const { router /* , middleware , controllers */ } = params;
     winston.info('Initializing custom user props...');
@@ -18,12 +19,12 @@ plugin.init = async function (params, callback) {
     //注册用户自定义字段,customFields默认有四个字段
     //检查customFields，如果缺少默认字段，添加默认字段到customFields
 	let defaultFields = [
-		{ name: 'snsUrl', label: '[[custom-user-props:snsUrl]]', type: 'text' },
-		{ name: 'domainType', label: '[[custom-user-props:domainType]]', type: 'select',
+		{ name: 'snsUrl', label: '[[custom-user-props:snsUrl]]', type: 'text', regProp: true },
+		{ name: 'domainType', label: '[[custom-user-props:domainType]]', type: 'select', regProp: true,
 			options: 'beauty,health,baby,travel' },
-		{ name: 'followerSize', label: '[[custom-user-props:followerSize]]', type: 'select',
+		{ name: 'followerSize', label: '[[custom-user-props:followerSize]]', type: 'select', regProp: true,
 			options: 'less_than_5k,10k,50k,100k,more_than_100k' },
-		{ name: 'platform', label: '[[custom-user-props:platform]]', type: 'select',
+		{ name: 'platform', label: '[[custom-user-props:platform]]', type: 'select', regProp: true,
 			options: 'wechat,weibo,douyin,kuaishou,xiaohongshu,twitter,instagram,facebook' }
 	]
 	if(!setting?.customFields?.length){
@@ -54,6 +55,9 @@ plugin.init = async function (params, callback) {
     });
     //注册管理员可查看的页面
     routeHelpers.setupAdminPageRoute(router, '/admin/plugins/custom-user-props', controllers.renderAdminPage);
+
+	// const Topics = require.main.require('./src/topics');
+	// Topics.onUserLogin = plugin.onUserLogin;
  };
 
 //{ "hook": "filter:account/edit.build", "method": "filterAccountEditBuild" },
@@ -127,3 +131,60 @@ plugin.addAdminNavigation = (header) => {
     return header;
 };
 
+plugin.addCustomFields = async function (data) {
+    const settings = await meta.settings.get('custom-user-props');
+    const customFields = settings.customFields || [];
+
+    for (const field of customFields) {
+        if (field.regProp === 'on') {
+            let html = '';
+            if (field.type === 'text') {
+                html = `<input type="text" class="form-control" name="${field.name}" id="${field.name}" placeholder="${field.label}" />`;
+            } else if (field.type === 'select') {
+                const options = (field.options || '').split(',').map(option => option.trim());
+                html = `<select class="form-control" name="${field.name}" id="${field.name}">
+                    <option value=""></option>
+                    ${options.map(option => `<option value="${option}">${option}</option>`).join('')}
+                </select>`;
+            }
+
+            data.templateData.regFormEntry.push({
+                label: field.label,
+                styleName: `custom-${field.name}`,
+                html: html
+            });
+        }
+    }
+
+    return data;
+};
+
+plugin.validateCustomFields = function (data) {
+	//example validation for phone number
+    const userData = data.userData;
+    const phone = userData.phone;
+
+    if (phone && !/^\d{10}$/.test(phone)) {
+        data.errors.push('Invalid phone number. Please enter a 10-digit number.');
+    }
+
+    return data;
+};
+
+plugin.saveCustomFields = async function (result) {
+    const customFields = {};
+    // 获取插件设置中定义的自定义字段
+    const settings = await meta.settings.get('custom-user-props');
+    const definedFields = settings.customFields || [];
+
+    // 遍历定义的自定义字段
+    for (const field of definedFields) {
+        customFields[field.name] = result.data[field.name]||'';
+    }
+	winston.info('Saving custom fields for user:', customFields);
+	result.user = {
+		...result.user,
+		...customFields
+	}
+	return result;
+};

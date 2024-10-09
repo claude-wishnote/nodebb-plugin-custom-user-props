@@ -18,6 +18,8 @@ define('admin/plugins/custom-user-props', ['settings', 'alerts'], function(Setti
                     }
                 });
             });
+			//重新加载页面
+			window.location.reload();
         });
 
         $('#add-field').on('click', function() {
